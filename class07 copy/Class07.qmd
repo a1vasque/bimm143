@@ -1,0 +1,288 @@
+---
+title: "Class 7: Machine Learning 1"
+author: Andres Vasquez (A16278181)
+format: pdf
+---
+
+Today we will start our multi-part exploration of some key machine learning methods. We will begin with clustering - finding groupings in data, and then dimensionallity reduction.
+
+
+## Clustering
+
+Lets start with "k-means" clustering.
+
+The main function in base R for this `kmeans()`.
+
+```{r}
+# Make up some data
+hist(rnorm(100000, mean =3 ))
+```
+
+```{r}
+tmp <- c(rnorm(30, -3),
+rnorm(30, +3))
+x <- cbind(x=tmp, y=rev(tmp))
+plot(x)
+```
+
+Now let's tru out `kmeans()`
+
+```{r}
+km <- kmeans(x, centers = 2)
+km
+```
+
+```{r}
+attributes(km)
+```
+
+> Q. How many points in each cluster?
+
+```{r}
+km$size
+```
+
+> Q. What component of your result object defaults cluster assignment/membership?
+
+```{r}
+km$cluster
+```
+
+> Q. What are centers/mean values of each cluster?
+
+```{r}
+km$centers
+```
+
+> Q. Make a plot of your data showing your clustering results (groupings/clusters and cluster centers).
+
+```{r}
+plot(x, col = c("red","blue"))
+```
+
+
+```{r}
+c(1:5) +c(100,1)
+```
+
+
+```{r}
+v <- plot(x, col = km$cluster) +
+points(km$centers, col = "darkgreen", pch = 15, cex = 2)
+v
+```
+
+> Q. Run `kmeans()` again and cluster in 4 groups and plot the results.
+
+```{r}
+km4 <- kmeans(x, centers = 4)
+plot(x,col = km4$cluster)
+points(km4$centers, col = "darkorange", pch = 15, cex = 2)
+```
+
+## Hierarchical Clustering
+
+
+This form of clustering aims to reveal the structure in your data by progressively grouping points into a even smaller number of clusters.
+
+The main function in base R is `hclust()`. This function does not take our input data directly but wants a "distance matrix" that details how (dis)similar all our input points are to each other.
+
+
+```{r}
+hc <- hclust(dist(x))
+hc
+```
+
+The print out above is not very useful (unlike that from kmeans) but there is a useful `plot()` method.
+
+```{r}
+plot(hc)
+abline(h=10, col = "red")
+```
+
+To get my main result (my cluster membership vector) I need to "cut" my tree using the function `cutree()`
+
+```{r}
+grps <- cutree(hc, h = 10)
+grps
+```
+
+```{r}
+plot(x, col = grps)
+```
+
+
+```{r}
+plot(x, col = cutree(hc, h = 6))
+```
+
+## Hands on with Principal Component Analysis (PCA)
+
+The goal of PCA is to reduce the dimensionallity of a dataset down to some smaller subset of new variables (called PCs) that are useful bases for further analysis, like visualization, clustering, etc.
+
+## Data import
+
+Read data about crazy eating trends in the UK and N. Ireland
+
+```{r}
+url <- "https://tinyurl.com/UK-foods"
+x <- read.csv(url)
+```
+
+> Q1. How many rows and columns are in your new data frame named x? What R functions could you use to answer this questions?
+
+```{r}
+dim(x)
+```
+
+```{r}
+# Preview the first 6 rows
+head(x)
+```
+
+```{r}
+# Note how the minus indexing works
+rownames(x) <- x[,1]
+x <- x[,-1]
+head(x)
+```
+
+```{r}
+dim(x)
+```
+
+"Alternative approach"
+
+```{r}
+x <- read.csv(url, row.names=1)
+head(x)
+```
+
+> Q2. Which approach to solving the ‘row-names problem’ mentioned above do you prefer and why? Is one approach more robust than another under certain circumstances?
+
+I prefer the second approach because it requires less steps, however the first approach would be more robust.
+
+## Spotting major differences and trends
+
+```{r}
+barplot(as.matrix(x), beside=T, col=rainbow(nrow(x)))
+```
+
+> Q3: Changing what optional argument in the above barplot() function results in the following plot?
+
+Adding the `beside = ` affects the result of the plot.
+
+```{r}
+barplot(as.matrix(x), col=rainbow(nrow(x)))
+```
+
+The so-called "pairs" plot can be useful for small datasets:
+
+> Q5: Generating all pairwise plots may help somewhat. Can you make sense of the following code and resulting figure? What does it mean if a given point lies on the diagonal for a given plot?
+
+```{r}
+pairs(x, col=rainbow(nrow(x)), pch = 16)
+```
+
+The location of the point indicates with country has a higher or lower trend compared to the other country. If the point is in the middle, then both countries have a similar trend.
+
+> Q6. What is the main differences between N. Ireland and the other countries of the UK in terms of this data-set?
+
+
+## PCA to the rescue
+
+So the pairs plot is useful for small datasets but it can be lots of work to interpret and gets intractable for larger datasets.
+
+So PCA to the rescue...
+
+The main function in base R is called `prcomp()`. This function wants the transpose of our data in thise case, `t()`
+
+```{r}
+pca <- prcomp(t(x))
+summary(pca)
+```
+
+```{r}
+attributes(pca)
+pca$x
+```
+
+
+A major PCA result viz is called a "PCA plot" (a.k.a: a score plot, biplot, PC1 vs. PC2 plot, ordination plot)
+
+> Q7. Complete the code below to generate a plot of PC1 vs PC2. The second line adds text labels over the data points.
+
+```{r}
+# Plot PC1 vs PC2
+mycols <- c("orange", "red", "blue", "green")
+plot(pca$x[,1], pca$x[,2], col = mycols, xlab="PC1", ylab="PC2", pch = 16)
+abline(h=0, col = "gray")
+abline(v=0, col = "gray")
+```
+
+Another important output from PCA is called the "loadings" vector or the "rotation" component - this tells us how much the original vairables (the foods in this case) contribute to the new PCs.
+
+```{r}
+pca$rotation
+```
+
+PCA looks to be a super useful method for gaining some insight into high dimensional data that is difficult to examine in other ways.
+
+
+# PCA of RNAseq data
+
+
+## Data input
+```{r}
+url2 <- "https://tinyurl.com/expression-CSV"
+rna.data <- read.csv(url2, row.names=1)
+head(rna.data)
+```
+
+```{r}
+## Again we have to take the transpose of our data 
+pca <- prcomp(t(rna.data), scale=TRUE)
+summary(pca) 
+```
+
+> Q10: How many genes and samples are in this data set?
+
+```{r}
+dim(rna.data)
+```
+
+```{r}
+attributes(pca)
+```
+
+```{r}
+head(pca$x)
+```
+
+I will make a main result figure using ggplot:
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+res <- as.data.frame(pca$x)
+```
+
+```{r}
+head(res)
+```
+
+```{r}
+mycols <- c(rep("blue", 5), rep("red",5))
+mycols
+```
+
+```{r}
+ggplot(res) +aes(PC1, PC2) +geom_point(col = mycols) + theme_bw()
+```
+
+```{r}
+colnames(rna.data)
+```
+

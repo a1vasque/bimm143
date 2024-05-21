@@ -1,0 +1,191 @@
+---
+title: "class05: Data Visualization with GGPLOT"
+author: "Andres Vasquez (PID: 16278181)"
+format: pdf
+toc: TRUE
+---
+
+Today we will have our first play with the **ggplot2** package - one of the most popular graphics packages on the planet
+
+There are many plotting systems in R. These include so-called *"base"* plotting/graphics.
+
+```{r}
+plot(cars)
+```
+
+Base plot is generally rather short code and somewhat dull plots -  but it is always there for you and is fast for big datasets.
+
+
+If I want to use **ggplot2** it takes some more work.
+
+```{r}
+# ggplot(cars)
+```
+
+I need to install the package first to my computer. To do this I can use the function `install.packages("ggplot2")`
+
+Every time I want to use a package I need to load it up with a `library()` call
+```{r}
+library(ggplot2)
+```
+
+Now finally I can use **ggplot2**
+
+```{r}
+ggplot(cars)
+```
+
+Every ggplot has at least 3 things:
+
+- **data** (the data.frame with the data you want to plot)
+- **aes** ( the aesthetic mapping of the data to the plot)
+- **geom** (how do you want the plot to look, points, lines, columns, etc)
+
+```{r}
+bp <- ggplot(cars) +
+  aes(x=speed, y=dist) +
+  geom_point()
+```
+
+
+
+```{r}
+bp + geom_smooth()
+```
+
+I want a linear model and no standard error bounds shown on my plot. I also want
+
+```{r}
+bp + geom_smooth(method = "lm", se = FALSE) + labs(title = "Stopping Distance of Old Cars", x = "Speed (MPH)", y = "Distance (ft)", caption = "From the cars dataset") +
+  theme_bw() +
+  theme(plot.title = element_text(face = "bold", size = 20, hjust = 0.5))
+```
+
+## A more complicated scatterplot
+
+Here we make a plot of gene expression data:
+
+```{r}
+url <- "https://bioboot.github.io/bimm143_S20/class-material/up_down_expression.txt"
+genes <- read.delim(url)
+head(genes)
+```
+
+```{r}
+round( table(genes$State)/nrow(genes) * 100, 2 )
+```
+
+```{r}
+n.gene <- nrow(genes)
+n.up <- sum(genes$State == "up")
+up.percent <- n.up/n.gene * 100
+round(up.percent, 2)
+```
+
+
+```{r}
+p <- ggplot(genes) +
+  aes(x = Condition1, y = Condition2, col = State) + geom_point()
+p
+```
+
+```{r}
+pp <- p + scale_color_manual(values=c("navy","darkgrey","salmon")) +
+  labs(title = "Gene Expression Changes Upon Drug Treatment", x = "Control (no drug)", y = "Drug Treatment") + 
+  theme_bw() + theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 15), axis.title = element_text(size = 10, face = "bold"))
+pp
+```
+
+## Exploring their gapminder dataset
+
+Here we will 
+
+```{r}
+# File location online
+url <- "https://raw.githubusercontent.com/jennybc/gapminder/master/inst/extdata/gapminder.tsv"
+
+gapminder <- read.delim(url)
+```
+
+
+> Q. How many entries rows are in this dataset?
+
+```{r}
+nrow(gapminder)
+```
+
+> Q. How many columns?
+
+```{r}
+dim(gapminder)
+```
+
+
+```{r}
+head(gapminder)
+```
+
+```{r}
+table(gapminder$year)
+```
+
+> Q. How many continents?
+
+```{r}
+table(gapminder$continent)
+```
+
+I could use the `unique()` function...
+
+```{r}
+length(unique(gapminder$continent))
+```
+
+
+> Q. How many countries?
+
+```{r}
+length(unique(gapminder$country))
+```
+
+```{r}
+ggplot(gapminder) + aes(x=gdpPercap,y =lifeExp) + geom_point(alpha = 0.2)
+```
+
+```{r}
+ggplot(gapminder) + aes(x=gdpPercap,y =lifeExp, col = continent) + geom_point()
+```
+
+```{r}
+ggplot(gapminder) + aes(x=gdpPercap,y =lifeExp) + geom_point(col = "navy") +theme_bw()
+```
+
+```{r}
+library(dplyr)
+
+gapminder_2007 <- filter(gapminder, year==2007)
+head(gapminder_2007)
+```
+Plot of 2007 with population and continent data
+```{r}
+library(dplyr)
+
+gapminder_2007 <- filter(gapminder, year==2007)
+ggplot(gapminder_2007) +
+  aes(x=gdpPercap, y=lifeExp, col=continent, size = pop) + geom_point(alpha = 0.5) + theme_bw()
+```
+
+```{r}
+ggplot(gapminder) + aes(x=gdpPercap,y =lifeExp) + geom_point(alpha = 0.2) + facet_wrap(~year)
+```
+
+```{r}
+gapminder_1957 <- gapminder %>% filter(year==1957 | year==2007)
+
+ggplot(gapminder_1957) + 
+  geom_point(aes(x = gdpPercap, y = lifeExp, color=continent,
+                 size = pop), alpha=0.7) + 
+  scale_size_area(max_size = 10) +
+  facet_wrap(~year)
+```
+
