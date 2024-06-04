@@ -11,4 +11,4 @@ My classwork for BIMM143 S24 at UC San Diego
 - **Class 8** [Breast Cancer Mini-Project](https://github.com/a1vasque/bimm143_github/blob/main/Class08%20copy/class08.qmd)
 - **Class 9** [Halloween Mini-Project](https://github.com/a1vasque/bimm143_github/blob/main/Class09%3A%20Halloween%20Mini-Project%20copy/Class09.qmd)
 - **Class 10** [Structural Bioinformatics](https://github.com/a1vasque/bimm143_github/blob/main/Class10%20copy/Class10.qmd)
-  
+- **Class 14** [RNA-seq Analysis](https://github.com/a1vasque/bimm143_github/blob/main/Class14%3A%20RNA-seq%20analysis%20mini-project%20copy/Class14.qmd)
