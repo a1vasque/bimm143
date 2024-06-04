@@ -1,7 +1,7 @@
 # Andres's Portfolio
 Bioinformatics class
 
-This repository is for my [BIMM 143 UC San Diego bioinformatics class] (https://bioboot.github.io/bimm143_S24/).
+This repository is for my [BIMM143 Spring 2024] (https://bioboot.github.io/bimm143_S24/) at UC San Diego.
 
 My classwork for BIMM143 S24 at UC San Diego
 
