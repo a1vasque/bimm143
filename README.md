@@ -10,5 +10,5 @@ My classwork for BIMM143 S24 at UC San Diego
 - **Class 7** [Machine Learning 1](https://github.com/a1vasque/bimm143_github/blob/main/class07%20copy/Class07.qmd)
 - **Class 8** [Breast Cancer Mini-Project](https://github.com/a1vasque/bimm143_github/blob/main/Class08%20copy/class08.qmd)
 - **Class 9** [Halloween Mini-Project](https://github.com/a1vasque/bimm143_github/blob/main/Class09%3A%20Halloween%20Mini-Project%20copy/Class09.qmd)
-- **Class 10**
+- **Class 10** [Structural Bioinformatics](https://github.com/a1vasque/bimm143_github/blob/main/Class10%20copy/Class10.qmd)
   
